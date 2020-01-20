@@ -1,0 +1,5 @@
+users_list:
+    labedzki_admin:
+        id_rsa_pub: /home/labi/workspace/ansible/share/rsa_pub/labi_id_rsa.pub
+    kapinos_admin:
+        id_rsa_pub: /home/labi/workspace/ansible/share/rsa_pub/kapinos_id_rsa.pub

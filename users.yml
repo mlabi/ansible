@@ -1,0 +1,35 @@
+- hosts: c_test
+  become: yes
+  vars_files: 
+    - ./group_vars/users.yml
+    #- ./group_vars/become.yml
+  tasks:
+    # - name: Print users records
+    #   debug:
+    #     msg: "User {{ item.key }} id_rsa_pub_file: {{ item.value.id_rsa_pub }}"
+    #   loop:
+    #     "{{ lookup ('dict', users_list) }}"
+    - name:
+      shell: chattr -i /etc/passwd
+
+    - name: create users
+      user: 
+        name: "{{ item.key }}"
+        groups: wheel
+      loop:
+        "{{ lookup ('dict', users_list) }}"
+
+    - name: Set authorized key taken from file
+      authorized_key:
+        user: "{{ item.key }}"
+        state: present
+        key: "{{ lookup('file', item.value.id_rsa_pub) }}"
+      loop:
+        "{{ lookup ('dict', users_list) }}"
+    
+    - name: "Make sure that group wheel is in the sudoers configuration"
+      lineinfile:
+        path: /etc/sudoers
+        state: present
+        regexp: '^%wheel'
+        line: '%wheel        ALL=(ALL)       NOPASSWD: ALL'
